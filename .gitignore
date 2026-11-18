@@ -1,0 +1,9 @@
+node_modules
+.next
+out
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+
+# Third-party Claude skills pack (MengTo/Skills, 91 MB). Reinstall from its source rather than versioning it here.
+.claude/skills/
