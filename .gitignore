@@ -7,3 +7,6 @@ next-env.d.ts
 
 # Third-party Claude skills pack (MengTo/Skills, 91 MB). Reinstall from its source rather than versioning it here.
 .claude/skills/
+
+# Internal brand research: kept locally, not published.
+riset-brand-moovs-coffee.md
