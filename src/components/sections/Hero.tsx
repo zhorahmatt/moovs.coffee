@@ -1,8 +1,7 @@
-import { media } from "@/lib/media";
 import { site } from "@/lib/site";
 import { Icon } from "../Icon";
 import { OpenStatus } from "../OpenStatus";
-import { Photo } from "../Photo";
+import { HeroVideo } from "../HeroVideo";
 
 const ticker = [
   "7 A.M. ready",
@@ -18,12 +17,17 @@ export function Hero() {
       <div className="hero__media" data-hero-media>
         <div className="hero__drift" data-hero-drift>
           <div className="hero__pointer" data-hero-pointer>
-            <Photo media={media.hero} sizes="100vw" priority className="hero__photo" />
+            <HeroVideo
+              pauseIcon={<Icon name="pause-linear" size={14} />}
+              playIcon={<Icon name="play-linear" size={14} />}
+            />
           </div>
         </div>
         <div className="hero__shade" aria-hidden="true" />
         <div className="grain" aria-hidden="true" />
       </div>
+
+      <div className="hero__controls" data-hero-controls />
 
       <div className="hero__content wrap" data-hero-content>
         <p className="overline hero__meta" data-hero-meta>

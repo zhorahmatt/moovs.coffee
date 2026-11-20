@@ -108,7 +108,7 @@ export function Motion() {
               { clipPath: "inset(0% 0% 0% 0% round 0px)", duration: 1.7, ease: "expo.inOut" },
               0,
             )
-            .fromTo(q(".hero__photo img"), { scale: 1.3 }, { scale: 1, duration: 2.4, ease: "expo.out" }, 0)
+            .fromTo(q("[data-hero-frame]"), { scale: 1.3 }, { scale: 1, duration: 2.4, ease: "expo.out" }, 0)
             .from(split.words, { yPercent: 112, duration: 1.15, stagger: 0.06 }, 0.35)
             .from(q("[data-hero-meta]"), { autoAlpha: 0, y: 14, duration: 0.9 }, 0.75)
             .from(q("[data-hero-fade]"), { autoAlpha: 0, y: 18, duration: 0.9 }, 0.9)
@@ -427,7 +427,7 @@ export function Motion() {
             });
           }
 
-          const photo = document.querySelector<HTMLImageElement>("[data-hero] img");
+          const photo = document.querySelector<HTMLImageElement>("[data-hero] .hero__poster");
           const photoReady =
             photo && !photo.complete
               ? new Promise<void>((resolve) => {

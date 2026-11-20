@@ -221,24 +221,104 @@
   position: absolute;
   inset: -24px;
 }
-/* Warm grade so the stand-in photograph sits in the brand's palette. */
-.hero__drift::after {
-  content: "";
+/* The clip: on wide screens it sits to the right and dissolves into the ink
+   background, so the headline reads on dark; on phones it fills the top. */
+.hero__frame {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 56vw;
+  height: 84%;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 34%), linear-gradient(0deg, transparent 0%, #000 30%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 34%), linear-gradient(0deg, transparent 0%, #000 30%);
+  mask-composite: intersect;
+}
+.hero__poster,
+.hero__video,
+.hero__dip {
   position: absolute;
   inset: 0;
-  background: linear-gradient(200deg, #e9a56b 0%, var(--terracotta) 100%);
-  mix-blend-mode: soft-light;
-  opacity: 0.75;
+  width: 100%;
+  height: 100%;
+}
+.hero__poster,
+.hero__video {
+  object-fit: cover;
+  object-position: 4% 50%;
+}
+.hero__poster {
+  color: rgb(255 255 255 / 0.6);
+  font-size: 0.75rem;
+}
+.hero__video {
+  opacity: 0;
+  transition: opacity 0.9s var(--ease);
+}
+.hero__frame.is-playing .hero__video {
+  opacity: 1;
+}
+.hero__dip {
+  background: #0b0806;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+  pointer-events: none;
+}
+.hero__frame.is-dipping .hero__dip {
+  opacity: 0.92;
+}
+.hero__controls {
+  position: absolute;
+  top: 104px;
+  right: var(--gutter);
+  z-index: 3;
+}
+.hero__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid rgb(255 255 255 / 0.28);
+  border-radius: 999px;
+  background: rgb(17 17 17 / 0.4);
+  color: var(--white);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition:
+    background-color 0.3s var(--ease),
+    border-color 0.3s var(--ease);
+}
+.hero__toggle:hover {
+  background: rgb(17 17 17 / 0.7);
+  border-color: rgb(255 255 255 / 0.6);
 }
 .hero__shade {
-  background: linear-gradient(
-    180deg,
-    rgb(17 17 17 / 0.58) 0%,
-    rgb(17 17 17 / 0.14) 32%,
-    rgb(17 17 17 / 0.34) 58%,
-    rgb(17 17 17 / 0.9) 100%
-  );
+  background: linear-gradient(180deg, rgb(17 17 17 / 0.45) 0%, rgb(17 17 17 / 0) 22%, rgb(17 17 17 / 0) 55%, rgb(17 17 17 / 0.75) 100%);
 }
+
+@media (max-width: 959px) {
+  .hero__frame {
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 64%;
+    -webkit-mask-image: linear-gradient(0deg, transparent 0%, #000 32%);
+    mask-image: linear-gradient(0deg, transparent 0%, #000 32%);
+  }
+  .hero__poster,
+  .hero__video {
+    object-position: 36% 50%;
+  }
+  .hero__controls {
+    top: 84px;
+  }
+}
+
 .hero__content {
   position: relative;
   display: flex;

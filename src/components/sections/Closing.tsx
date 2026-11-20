@@ -86,7 +86,7 @@ export function Footer() {
 
       <div className="wrap footer__base">
         <p>© 2026 Moovs Coffee, Makassar.</p>
-        <p>Photography shown is licensed stand-in imagery from Unsplash, pending the Moovs shoot.</p>
+        <p>Photography and video shown are licensed stand-ins from Unsplash and Pexels, pending the Moovs shoot.</p>
       </div>
 
       <p className="footer__super" aria-hidden="true">

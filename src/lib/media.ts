@@ -3,6 +3,7 @@
  *
  * Every photo on the site is a licensed stand-in served from Unsplash's CDN
  * under the Unsplash License (free for commercial use, no permission needed).
+ * The hero video is a Pexels clip, self-hosted, under the Pexels License.
  * They hold the place of Moovs' own photography and should be swapped for
  * the brand's real shoot before launch. None of them depict Moovs stores,
  * staff, products, or customers, and the site never claims they do.
@@ -23,14 +24,6 @@ export type Media = {
 const by = (handle: string) => `https://unsplash.com/@${handle}`;
 
 export const media = {
-  hero: {
-    id: "1781930264382-d0f24a214625",
-    alt: "A rider on a scooter crossing a hazy city street in early morning light",
-    author: "Manh Ngo",
-    source: by("manhngo"),
-    tone: "#8f8b78",
-    focus: "60% 60%",
-  },
   outTheDoor: {
     id: "1708961352581-bdd1f02da6ed",
     alt: "A hand holding a glass of iced coffee against a warm sunlit wall",
@@ -182,3 +175,19 @@ export function photoSrcSet(m: Media, ratio?: string, max = 1920) {
     .map((w) => `${photoUrl(m, w, ratio)} ${w}w`)
     .join(", ");
 }
+
+/**
+ * Hero video: a stand-in until Moovs shoots its own (an Es Kopi Aren being
+ * poured at the counter would replace it one for one). Self-hosted under
+ * /public/media; the poster is the clip's last frame.
+ */
+export const heroVideo = {
+  src: "/media/hero-pour.mp4",
+  poster: "/media/hero-pour-poster.jpg",
+  width: 1280,
+  height: 720,
+  alt: "Ice, then coffee and milk, poured into a glass on a wooden table in warm light",
+  author: "Olha Ruskykh",
+  source: "https://www.pexels.com/video/person-pouring-ice-and-coffee-in-a-glass-6166871/",
+  license: "Pexels License",
+} as const;
