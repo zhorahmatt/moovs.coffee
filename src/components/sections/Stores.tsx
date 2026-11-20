@@ -1,59 +1,57 @@
+import { getCopy } from "@/lib/copy";
+import { href, type Lang } from "@/lib/i18n";
 import { media } from "@/lib/media";
 import { site } from "@/lib/site";
 import { Icon } from "../Icon";
 import { Photo } from "../Photo";
 
-export function Stores() {
+const factIcons = ["clock-circle-linear", "qr-code-linear", "map-point-linear"] as const;
+
+export function Stores({ lang }: { lang: Lang }) {
+  const t = getCopy(lang).stores;
   return (
     <section className="stores" id="stores" aria-labelledby="stores-title">
       <div className="wrap stores__grid">
         <div className="stores__count">
           <p className="overline" data-reveal>
-            Moovstores
+            {t.overline}
           </p>
           <p className="stores__number">
-            <span className="sr-only">{site.storeCount} stores and counting</span>
+            <span className="sr-only">{t.countSr(site.storeCount)}</span>
             <span aria-hidden="true" data-count={site.storeCount}>
               {site.storeCount}
             </span>
           </p>
           <p className="stores__label" aria-hidden="true" data-reveal>
-            Stores &amp; counting
+            {t.label}
           </p>
         </div>
 
         <figure className="stores__figure">
-          <Photo media={media.store} ratio="4:5" sizes="(min-width: 960px) 40vw, 100vw" maxWidth={1440} reveal />
-          <figcaption className="stores__caption overline">
-            <span>Store #21</span>
-            <span>Something&rsquo;s a little different.</span>
+          <Photo media={media.store} lang={lang} ratio="4:5" sizes="(min-width: 960px) 40vw, 100vw" maxWidth={1440} reveal />
+          <figcaption className="stores__caption overline" lang="en">
+            <span>{t.caption[0]}</span>
+            <span>{t.caption[1]}</span>
           </figcaption>
         </figure>
 
         <div className="stores__body">
-          <h2 className="h2" id="stores-title" data-split>
-            Not your usual store.
+          <h2 className="h2" id="stores-title" data-split lang="en">
+            {t.title}
           </h2>
           <p className="lede" data-reveal>
-            Black ribbed ceramic, pale wood, warm light. A place to pause, and a place to step forward. The
-            twenty-first one opened in August 2026, and the list keeps growing across Makassar.
+            {t.lede}
           </p>
           <ul className="stores__facts" data-reveal>
-            <li>
-              <Icon name="clock-circle-linear" />
-              <span>07:00 to 22:00. Hours can vary by store.</span>
-            </li>
-            <li>
-              <Icon name="qr-code-linear" />
-              <span>Pick-up by QR, so it&rsquo;s ready when you pass.</span>
-            </li>
-            <li>
-              <Icon name="map-point-linear" />
-              <span>Delivery through GoFood.</span>
-            </li>
+            {t.facts.map((fact, index) => (
+              <li key={fact}>
+                <Icon name={factIcons[index]} />
+                <span>{fact}</span>
+              </li>
+            ))}
           </ul>
-          <a className="btn btn--light" href="/stores" data-reveal>
-            Find a store <Icon name="arrow-right-linear" size={18} />
+          <a className="btn btn--light" href={href(lang, "/stores")} data-reveal>
+            {t.cta} <Icon name="arrow-right-linear" size={18} />
           </a>
         </div>
       </div>

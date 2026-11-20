@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { services, site, stores, type Service, type Store } from "@/lib/site";
+import { getCopy } from "@/lib/copy";
+import type { Lang } from "@/lib/i18n";
+import { serviceKeys, site, stores, type Service, type Store } from "@/lib/site";
 
 /**
  * Layout specimens. Shown ONLY in development and ONLY while the real store
@@ -11,7 +13,7 @@ import { services, site, stores, type Service, type Store } from "@/lib/site";
 const specimens: Store[] =
   process.env.NODE_ENV !== "production"
     ? [
-        { number: 21, name: "Nama store", area: "Area A", address: "Alamat lengkap store, Makassar", opens: "07:00", closes: "22:00", services: ["dine-in", "pickup", "delivery"], note: "Newest" },
+        { number: 21, name: "Nama store", area: "Area A", address: "Alamat lengkap store, Makassar", opens: "07:00", closes: "22:00", services: ["dine-in", "pickup", "delivery"], isNewest: true },
         { number: 12, name: "Nama store", area: "Area B", address: "Alamat lengkap store, Makassar", opens: "07:30", closes: "21:30", services: ["pickup", "delivery"] },
         { number: 3, name: "Nama store", area: "Area A", address: "Alamat lengkap store, Makassar", opens: "07:00", closes: "22:00", services: ["dine-in", "pickup"] },
       ]
@@ -35,7 +37,9 @@ function makassarMinutes() {
 
 const isOpen = (store: Store, now: number) => now >= toMinutes(store.opens) && now < toMinutes(store.closes);
 
-export function StoreLocator({ arrow, arrowOut }: { arrow: ReactNode; arrowOut: ReactNode }) {
+export function StoreLocator({ lang, arrow, arrowOut }: { lang: Lang; arrow: ReactNode; arrowOut: ReactNode }) {
+  const copy = getCopy(lang);
+  const t = copy.storesPage.locator;
   const list = stores.length ? stores : specimens;
   const usingSpecimens = !stores.length && specimens.length > 0;
 
@@ -77,15 +81,12 @@ export function StoreLocator({ arrow, arrowOut }: { arrow: ReactNode; arrowOut: 
     return (
       <div className="wrap locator__interim">
         <h2 className="h2" data-split>
-          The full list is on its way.
+          {t.interimTitle}
         </h2>
         <div data-reveal>
-          <p className="lede">
-            We&rsquo;re confirming every address, hour and service before we publish them here. Until then, store
-            locations are in the Outlet highlight on our Instagram.
-          </p>
+          <p className="lede">{t.interimBody}</p>
           <a className="btn btn--ink" href={site.links.instagram} target="_blank" rel="noreferrer">
-            Store locations on Instagram {arrowOut}
+            {t.interimCta} {arrowOut}
           </a>
         </div>
       </div>
@@ -104,9 +105,9 @@ export function StoreLocator({ arrow, arrowOut }: { arrow: ReactNode; arrowOut: 
 
       <div className="locator__filters">
         {areas.length > 1 ? (
-          <div className="locator__group" role="group" aria-label="Area">
+          <div className="locator__group" role="group" aria-label={t.area}>
             <button type="button" className="chip" aria-pressed={area === "all"} onClick={() => setArea("all")}>
-              All areas
+              {t.allAreas}
             </button>
             {areas.map((name) => (
               <button key={name} type="button" className="chip" aria-pressed={area === name} onClick={() => setArea(name)}>
@@ -116,8 +117,8 @@ export function StoreLocator({ arrow, arrowOut }: { arrow: ReactNode; arrowOut: 
           </div>
         ) : null}
 
-        <div className="locator__group" role="group" aria-label="Services">
-          {(Object.keys(services) as Service[]).map((service) => (
+        <div className="locator__group" role="group" aria-label={t.servicesLabel}>
+          {serviceKeys.map((service) => (
             <button
               key={service}
               type="button"
@@ -125,18 +126,18 @@ export function StoreLocator({ arrow, arrowOut }: { arrow: ReactNode; arrowOut: 
               aria-pressed={wanted.includes(service)}
               onClick={() => toggleService(service)}
             >
-              {services[service]}
+              {t.services[service]}
             </button>
           ))}
           <button type="button" className="chip chip--open" aria-pressed={openOnly} onClick={() => setOpenOnly((v) => !v)}>
             <span className="status__dot" aria-hidden="true" />
-            Open now
+            {t.openNow}
           </button>
         </div>
       </div>
 
       <p className="locator__count" aria-live="polite">
-        Showing {shown.length} of {list.length} {list.length === 1 ? "store" : "stores"}
+        {t.showing(shown.length, list.length)}
       </p>
 
       {shown.length ? (
@@ -147,9 +148,9 @@ export function StoreLocator({ arrow, arrowOut }: { arrow: ReactNode; arrowOut: 
               <li key={store.number} id={`store-${store.number}`} className="scard">
                 <div className="scard__top">
                   <p className="scard__num">
-                    <span className="sr-only">Store number </span>#{String(store.number).padStart(2, "0")}
+                    <span className="sr-only">{t.storeNumber} </span>#{String(store.number).padStart(2, "0")}
                   </p>
-                  {store.note ? <span className="chip__badge">{store.note}</span> : null}
+                  {store.isNewest ? <span className="chip__badge">{copy.storesPage.newest}</span> : null}
                 </div>
                 <p className="overline scard__area">{store.area}</p>
                 <h3 className="scard__name">{store.name}</h3>
@@ -160,23 +161,23 @@ export function StoreLocator({ arrow, arrowOut }: { arrow: ReactNode; arrowOut: 
                   {now === null
                     ? `${store.opens} – ${store.closes}`
                     : open
-                      ? `Open now · until ${store.closes}`
-                      : `Closed · opens ${store.opens}`}
+                      ? copy.common.openUntil(store.closes)
+                      : copy.common.closedUntil(store.opens)}
                 </p>
 
-                <ul className="scard__services" aria-label="Services">
+                <ul className="scard__services" aria-label={t.servicesLabel}>
                   {store.services.map((service) => (
-                    <li key={service}>{services[service]}</li>
+                    <li key={service}>{t.services[service]}</li>
                   ))}
                 </ul>
 
                 <div className="scard__actions">
                   <a className="btn btn--primary btn--sm" href={store.orderUrl ?? site.links.order} target="_blank" rel="noreferrer">
-                    Order {arrowOut}
+                    {t.order} {arrowOut}
                   </a>
                   {store.mapsUrl ? (
                     <a className="link" href={store.mapsUrl} target="_blank" rel="noreferrer">
-                      Directions {arrow}
+                      {t.directions} {arrow}
                     </a>
                   ) : null}
                 </div>
@@ -186,9 +187,9 @@ export function StoreLocator({ arrow, arrowOut }: { arrow: ReactNode; arrowOut: 
         </ul>
       ) : (
         <div className="locator__empty">
-          <p>No store matches those filters right now.</p>
+          <p>{t.noMatch}</p>
           <button type="button" className="btn btn--ink btn--sm" onClick={reset}>
-            Clear filters
+            {t.clear}
           </button>
         </div>
       )}

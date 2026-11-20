@@ -2,13 +2,36 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
+import { getCopy } from "@/lib/copy";
+import { href, langs, switchPath, type Lang } from "@/lib/i18n";
 import { navLinks, site } from "@/lib/site";
 import { getLenis } from "@/lib/lenis";
 import { OpenStatus } from "./OpenStatus";
 import { Wordmark } from "./Wordmark";
 
-export function Nav({ arrow }: { arrow: ReactNode }) {
+export function Nav({ lang, arrow }: { lang: Lang; arrow: ReactNode }) {
   const pathname = usePathname();
+  const copy = getCopy(lang);
+  const t = copy.nav;
+  const links = navLinks.map((link) => ({ href: href(lang, link.path), label: t.links[link.key] }));
+
+  // The same page in the other language. Each language keeps its own autonym.
+  const languages = (
+    <div className="lang" role="group" aria-label={t.language}>
+      {langs.map((code) => (
+        <a
+          key={code}
+          href={switchPath(pathname, code)}
+          hrefLang={code}
+          lang={code}
+          aria-current={code === lang ? "true" : undefined}
+          aria-label={code === "en" ? "English" : "Bahasa Indonesia"}
+        >
+          {code.toUpperCase()}
+        </a>
+      ))}
+    </div>
+  );
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -51,15 +74,15 @@ export function Nav({ arrow }: { arrow: ReactNode }) {
   return (
     <header className={`nav${scrolled ? " is-scrolled" : ""}${open ? " is-open" : ""}`}>
       <a className="skip" href="#main">
-        Skip to content
+        {t.skip}
       </a>
       <div className="nav__bar">
-        <a className="nav__brand" href="/#top" aria-label="Moovs Coffee, home">
+        <a className="nav__brand" href={href(lang, "/#top")} aria-label={t.home}>
           <Wordmark />
         </a>
 
-        <nav className="nav__links" aria-label="Primary">
-          {navLinks.map((link) => (
+        <nav className="nav__links" aria-label={t.primary}>
+          {links.map((link) => (
             <a key={link.href} href={link.href} aria-current={pathname === link.href ? "page" : undefined}>
               {link.label}
             </a>
@@ -67,9 +90,11 @@ export function Nav({ arrow }: { arrow: ReactNode }) {
         </nav>
 
         <div className="nav__end">
-          <OpenStatus className="nav__status" />
-          <a className="btn btn--primary btn--sm" href={site.links.order} target="_blank" rel="noreferrer">
-            Order Now {arrow}
+          <OpenStatus lang={lang} className="nav__status" />
+          <div className="nav__lang">{languages}</div>
+          <a className="btn btn--primary btn--sm nav__order" href={site.links.order} target="_blank" rel="noreferrer">
+            <span className="nav__order-long">{copy.common.order}</span>
+            <span className="nav__order-short">{copy.common.orderShort}</span> {arrow}
           </a>
           <button
             ref={toggleRef}
@@ -79,15 +104,15 @@ export function Nav({ arrow }: { arrow: ReactNode }) {
             aria-controls="mobile-menu"
             onClick={() => setOpen((value) => !value)}
           >
-            <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
+            <span className="sr-only">{open ? t.closeMenu : t.openMenu}</span>
             <span className="nav__burger" aria-hidden="true" />
           </button>
         </div>
       </div>
 
       <div id="mobile-menu" ref={panelRef} className="nav__panel" inert={!open}>
-        <nav aria-label="Mobile">
-          {navLinks.map((link, index) => (
+        <nav aria-label={t.mobile}>
+          {links.map((link, index) => (
             <a
               key={link.href}
               href={link.href}
@@ -101,9 +126,10 @@ export function Nav({ arrow }: { arrow: ReactNode }) {
           ))}
         </nav>
         <div className="nav__panel-foot">
-          <OpenStatus showClock />
+          <OpenStatus lang={lang} showClock />
+          {languages}
           <a className="btn btn--primary" href={site.links.order} target="_blank" rel="noreferrer">
-            Order Now {arrow}
+            {copy.common.order} {arrow}
           </a>
         </div>
       </div>

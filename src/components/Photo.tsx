@@ -1,7 +1,10 @@
+import type { Lang } from "@/lib/i18n";
 import { photoSrcSet, photoUrl, type Media } from "@/lib/media";
 
 type Props = {
   media: Media;
+  /** Language of the description read by screen readers. */
+  lang?: Lang;
   /** Server-side crop ratio, e.g. "4:5". Omit to keep the original frame. */
   ratio?: string;
   sizes: string;
@@ -19,7 +22,7 @@ type Props = {
  * Responsive photo. The wrapper carries the photo's dominant tone, so the
  * layout keeps its shape and colour while loading or if the file is missing.
  */
-export function Photo({ media, ratio, sizes, priority, className, decorative, maxWidth = 1920, reveal, parallax }: Props) {
+export function Photo({ media, lang = "en", ratio, sizes, priority, className, decorative, maxWidth = 1920, reveal, parallax }: Props) {
   return (
     <span
       className={`photo ${className ?? ""}`}
@@ -31,7 +34,7 @@ export function Photo({ media, ratio, sizes, priority, className, decorative, ma
         src={photoUrl(media, 1080, ratio)}
         srcSet={photoSrcSet(media, ratio, maxWidth)}
         sizes={sizes}
-        alt={decorative ? "" : media.alt}
+        alt={decorative ? "" : lang === "id" ? media.altId : media.alt}
         loading={priority ? "eager" : "lazy"}
         decoding="async"
         fetchPriority={priority ? "high" : "auto"}

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { getCopy } from "@/lib/copy";
+import type { Lang } from "@/lib/i18n";
 import { menu, menuHasItemPrices, rupiah, type MenuItem } from "@/lib/site";
 import { Photo } from "./Photo";
 
@@ -14,7 +16,10 @@ const priceFor = (item: MenuItem, size: Size) =>
  * section per list. Per-item prices and the Small / Large switch appear on
  * their own once prices exist in the data (see MenuItem in lib/site.ts).
  */
-export function MenuBrowser() {
+export function MenuBrowser({ lang }: { lang: Lang }) {
+  const copy = getCopy(lang);
+  const t = copy.menu;
+  const page = copy.menuPage;
   const [active, setActive] = useState(menu[0].id);
   const [size, setSize] = useState<Size>("small");
   const bar = useRef<HTMLDivElement>(null);
@@ -47,7 +52,7 @@ export function MenuBrowser() {
       <div className="mbar">
         <div className="wrap">
           <div className="mbar__inner">
-            <nav className="mbar__chips" aria-label="Menu categories" ref={bar}>
+            <nav className="mbar__chips" aria-label={t.tablist} ref={bar}>
               {menu.map((category) => (
                 <a
                   key={category.id}
@@ -56,13 +61,13 @@ export function MenuBrowser() {
                   aria-current={active === category.id ? "true" : undefined}
                 >
                   {category.label}
-                  {category.isNew ? <span className="chip__badge">New</span> : null}
+                  {category.isNew ? <span className="chip__badge">{copy.common.newBadge}</span> : null}
                 </a>
               ))}
             </nav>
 
             {menuHasItemPrices ? (
-              <div className="sizes" role="group" aria-label="Cup size">
+              <div className="sizes" role="group" aria-label={page.sizeGroup}>
                 {(["small", "large"] as const).map((option) => (
                   <button
                     key={option}
@@ -71,7 +76,7 @@ export function MenuBrowser() {
                     aria-pressed={size === option}
                     onClick={() => setSize(option)}
                   >
-                    {option === "small" ? "Small" : "Large"}
+                    {option === "small" ? page.small : page.large}
                     <span>{option === "small" ? "12 oz" : "22 oz"}</span>
                   </button>
                 ))}
@@ -93,24 +98,24 @@ export function MenuBrowser() {
             <div className="mcat__aside">
               <p className="overline mcat__index">
                 {String(index + 1).padStart(2, "0")} / {String(menu.length).padStart(2, "0")}
-                {category.isNew ? <span className="chip__badge">New</span> : null}
+                {category.isNew ? <span className="chip__badge">{copy.common.newBadge}</span> : null}
               </p>
               <h2 className="h2" id={`${category.id}-title`} data-split>
                 {category.label}
               </h2>
               <p className="mcat__note" data-reveal>
-                {category.note}
+                {t.categories[category.id].note}
               </p>
               <dl className="menu__facts" data-reveal>
                 <div>
-                  <dt>Price range</dt>
+                  <dt>{t.priceRange}</dt>
                   <dd>
                     {rupiah(category.priceFrom)} – {rupiah(category.priceTo)}
                   </dd>
                 </div>
                 <div>
-                  <dt>Served</dt>
-                  <dd>{category.sizes}</dd>
+                  <dt>{t.served}</dt>
+                  <dd>{t.categories[category.id].sizes}</dd>
                 </div>
               </dl>
             </div>
@@ -119,6 +124,7 @@ export function MenuBrowser() {
               <div className="mcat__photo">
                 <Photo
                   media={category.photo}
+                  lang={lang}
                   ratio="16:9"
                   sizes="(min-width: 960px) 56vw, 100vw"
                   maxWidth={1440}
@@ -133,7 +139,7 @@ export function MenuBrowser() {
                       <span className="menu__num">{String(itemIndex + 1).padStart(2, "0")}</span>
                       <span className="menu__item">
                         {item.name}
-                        {item.isNew ? <span className="chip__badge">New</span> : null}
+                        {item.isNew ? <span className="chip__badge">{copy.common.newBadge}</span> : null}
                       </span>
                       {price !== undefined ? <span className="menu__price">{rupiah(price)}</span> : null}
                     </li>

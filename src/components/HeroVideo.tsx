@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { getCopy } from "@/lib/copy";
+import type { Lang } from "@/lib/i18n";
 import { heroVideo } from "@/lib/media";
 
-type Props = { pauseIcon: ReactNode; playIcon: ReactNode };
+type Props = { lang: Lang; pauseIcon: ReactNode; playIcon: ReactNode };
 
 /**
  * The hero's moving image. The poster is a normal <img>, so the hero is
@@ -16,7 +18,8 @@ type Props = { pauseIcon: ReactNode; playIcon: ReactNode };
  * loop point (empty glass after full glass would otherwise jump), and has a
  * pause control because it moves for longer than five seconds.
  */
-export function HeroVideo({ pauseIcon, playIcon }: Props) {
+export function HeroVideo({ lang, pauseIcon, playIcon }: Props) {
+  const t = getCopy(lang).hero;
   const videoRef = useRef<HTMLVideoElement>(null);
   const [enabled, setEnabled] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -106,7 +109,7 @@ export function HeroVideo({ pauseIcon, playIcon }: Props) {
           src={heroVideo.poster}
           width={heroVideo.width}
           height={heroVideo.height}
-          alt={heroVideo.alt}
+          alt={t.videoAlt}
           fetchPriority="high"
           decoding="async"
         />
@@ -132,10 +135,10 @@ export function HeroVideo({ pauseIcon, playIcon }: Props) {
               className="hero__toggle"
               onClick={toggle}
               aria-pressed={userPaused}
-              aria-label={userPaused ? "Play background video" : "Pause background video"}
+              aria-label={userPaused ? t.playLabel : t.pauseLabel}
             >
               {userPaused ? playIcon : pauseIcon}
-              <span aria-hidden="true">{userPaused ? "Play" : "Pause"}</span>
+              <span aria-hidden="true">{userPaused ? t.play : t.pause}</span>
             </button>,
             controls,
           )

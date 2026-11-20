@@ -1,3 +1,5 @@
+import { getCopy } from "@/lib/copy";
+import type { Lang } from "@/lib/i18n";
 import { moves } from "@/lib/site";
 import { Icon } from "../Icon";
 import { Photo } from "../Photo";
@@ -10,12 +12,13 @@ const ticks = [
   { label: "22", at: 100 },
 ];
 
-export function Day() {
+export function Day({ lang }: { lang: Lang }) {
+  const t = getCopy(lang).day;
   return (
     <section className="day" id="day" data-day aria-labelledby="day-title">
       <div className="day__pin">
         <div className="day__head wrap">
-          <p className="overline">A day in moovs</p>
+          <p className="overline">{t.overline}</p>
           <p className="day__clock" aria-hidden="true">
             <span data-day-clock>07:00</span>
             <span className="day__zone">WITA</span>
@@ -25,59 +28,64 @@ export function Day() {
         <div className="day__track" data-day-track>
           <header className="day__intro">
             <h2 className="h2" id="day-title" data-split>
-              One day, a few small moves.
+              {t.title}
             </h2>
             <p className="lede" data-reveal>
-              Follow the clock from the first cup to the last. Somewhere in here is the part of the day that&rsquo;s
-              yours.
+              {t.lede}
             </p>
             <p className="day__hint" aria-hidden="true">
-              Keep scrolling <Icon name="arrow-right-linear" size={18} />
+              {t.hint} <Icon name="arrow-right-linear" size={18} />
             </p>
           </header>
 
-          {moves.map((move, index) => (
-            <article key={move.time} className={`move move--${move.phase}`} data-day-panel data-time={move.time}>
-              <div className="move__photo" data-day-item>
-                <Photo
-                  media={move.photo}
-                  ratio="4:5"
-                  sizes="(min-width: 960px) 34vw, 100vw"
-                  maxWidth={1440}
-                  className="move__img"
-                />
-              </div>
-              <div className="move__text">
-                <p className="move__time" data-day-item>
-                  <span className="move__index">Move {String(index + 1).padStart(2, "0")}</span>
-                  <time dateTime={move.time}>{move.time}</time>
-                </p>
-                <h3 className="move__title" data-day-item>
-                  {move.title}
-                </h3>
-                <p className="move__body" data-day-item>
-                  {move.body}
-                </p>
-                <p className="move__pair" data-day-item>
-                  <span className="overline">Goes with</span>
-                  <span className="move__drink">{move.pairing}</span>
-                  <span className="move__note">{move.pairingNote}</span>
-                </p>
-              </div>
-            </article>
-          ))}
+          {moves.map((move, index) => {
+            const words = t.moves[index];
+            return (
+              <article key={move.time} className={`move move--${move.phase}`} data-day-panel data-time={move.time}>
+                <div className="move__photo" data-day-item>
+                  <Photo
+                    media={move.photo}
+                    lang={lang}
+                    ratio="4:5"
+                    sizes="(min-width: 960px) 34vw, 100vw"
+                    maxWidth={1440}
+                    className="move__img"
+                  />
+                </div>
+                <div className="move__text">
+                  <p className="move__time" data-day-item>
+                    <span className="move__index">
+                      {t.moveLabel} {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <time dateTime={move.time}>{move.time}</time>
+                  </p>
+                  <h3 className="move__title" data-day-item>
+                    {words.title}
+                  </h3>
+                  <p className="move__body" data-day-item>
+                    {words.body}
+                  </p>
+                  <p className="move__pair" data-day-item>
+                    <span className="overline">{t.goesWith}</span>
+                    <span className="move__drink">{move.pairing}</span>
+                    <span className="move__note">{words.note}</span>
+                  </p>
+                </div>
+              </article>
+            );
+          })}
 
           <div className="day__end" data-day-panel data-time="22:00">
             <p className="move__time" data-day-item>
-              <span className="move__index">Close</span>
+              <span className="move__index">{t.closeLabel}</span>
               <time dateTime="22:00">22:00</time>
             </p>
             <p className="day__end-title" data-day-item>
-              Lights out. <br />
-              Back at seven.
+              {t.endTitle[0]} <br />
+              {t.endTitle[1]}
             </p>
             <a className="btn btn--light" href="#menu" data-day-item>
-              See the menu <Icon name="arrow-down-linear" size={18} />
+              {t.endCta} <Icon name="arrow-down-linear" size={18} />
             </a>
           </div>
         </div>

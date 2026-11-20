@@ -1,3 +1,5 @@
+import { getCopy } from "@/lib/copy";
+import { href, type Lang } from "@/lib/i18n";
 import { media } from "@/lib/media";
 import { navLinks, site } from "@/lib/site";
 import { Icon } from "../Icon";
@@ -5,7 +7,9 @@ import { OpenStatus } from "../OpenStatus";
 import { Photo } from "../Photo";
 import { Wordmark } from "../Wordmark";
 
-export function Closing() {
+export function Closing({ lang }: { lang: Lang }) {
+  const copy = getCopy(lang);
+  const t = copy.closing;
   return (
     <section className="closing" aria-labelledby="closing-title">
       <div className="closing__media" aria-hidden="true">
@@ -14,19 +18,19 @@ export function Closing() {
         <div className="grain" />
       </div>
       <div className="wrap closing__content">
-        <OpenStatus showClock className="closing__status" />
-        <h2 className="closing__title" id="closing-title" data-split>
-          Whatever gets you out the door.
+        <OpenStatus lang={lang} showClock className="closing__status" />
+        <h2 className="closing__title" id="closing-title" data-split lang="en">
+          {t.title}
         </h2>
         <p className="lede" data-reveal>
-          We&rsquo;re here from 7 AM to 10 PM. Order ahead, or just walk in.
+          {t.lede}
         </p>
         <div className="closing__actions" data-reveal>
           <a className="btn btn--primary" href={site.links.order} target="_blank" rel="noreferrer">
-            Order Now <Icon name="arrow-right-up-linear" size={18} />
+            {copy.common.order} <Icon name="arrow-right-up-linear" size={18} />
           </a>
-          <a className="btn btn--ghost" href="/stores">
-            Find a Store
+          <a className="btn btn--ghost" href={href(lang, "/stores")}>
+            {copy.common.findStore}
           </a>
         </div>
       </div>
@@ -34,50 +38,52 @@ export function Closing() {
   );
 }
 
-export function Footer() {
+export function Footer({ lang }: { lang: Lang }) {
+  const copy = getCopy(lang);
+  const t = copy.footer;
   return (
     <footer className="footer">
       <div className="wrap footer__grid">
         <div className="footer__brand">
           <Wordmark />
-          <p>To accompany your next move.</p>
+          <p lang="en">{t.tagline}</p>
         </div>
 
         <div>
-          <h2 className="overline">Hours</h2>
+          <h2 className="overline">{t.hours}</h2>
           <p>
-            07:00 to 22:00 <abbr title="Waktu Indonesia Tengah">WITA</abbr>
+            {t.hoursValue} <abbr title="Waktu Indonesia Tengah">WITA</abbr>
           </p>
-          <p className="footer__muted">Hours can vary by store.</p>
+          <p className="footer__muted">{copy.common.hoursVary}</p>
         </div>
 
-        <nav aria-label="Footer">
-          <h2 className="overline">Explore</h2>
+        <nav aria-label={t.nav}>
+          <h2 className="overline">{t.explore}</h2>
           <ul>
             {navLinks.map((link) => (
-              <li key={link.href}>
-                <a href={link.href}>{link.label}</a>
+              <li key={link.key}>
+                <a href={href(lang, link.path)}>{copy.nav.links[link.key]}</a>
               </li>
             ))}
           </ul>
         </nav>
 
         <div>
-          <h2 className="overline">Order &amp; follow</h2>
+          <h2 className="overline">{t.orderFollow}</h2>
           <ul>
             <li>
               <a href={site.links.order} target="_blank" rel="noreferrer">
-                Pick Up Order
+                {t.pickup}
               </a>
             </li>
             <li>
               <a href={site.links.instagram} target="_blank" rel="noreferrer">
-                Instagram @moovs.coffee
+                {t.instagram}
               </a>
             </li>
             <li>
               <a href={site.links.parent} target="_blank" rel="noreferrer">
-                Part of Ruang Saturasa
+                {t.parent}
               </a>
             </li>
           </ul>
@@ -85,8 +91,8 @@ export function Footer() {
       </div>
 
       <div className="wrap footer__base">
-        <p>© 2026 Moovs Coffee, Makassar.</p>
-        <p>Photography and video shown are licensed stand-ins from Unsplash and Pexels, pending the Moovs shoot.</p>
+        <p>{t.copyright}</p>
+        <p>{t.credit}</p>
       </div>
 
       <p className="footer__super" aria-hidden="true">

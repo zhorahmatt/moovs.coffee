@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getCopy } from "@/lib/copy";
+import type { Lang } from "@/lib/i18n";
 import { site } from "@/lib/site";
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -21,7 +23,8 @@ function read() {
  * Live open/closed state on Makassar time. Server render and no-JS show the
  * plain opening hours; the live state takes over once mounted.
  */
-export function OpenStatus({ showClock = false, className }: { showClock?: boolean; className?: string }) {
+export function OpenStatus({ lang, showClock = false, className }: { lang: Lang; showClock?: boolean; className?: string }) {
+  const t = getCopy(lang).common;
   const [now, setNow] = useState<ReturnType<typeof read> | null>(null);
 
   useEffect(() => {
@@ -31,12 +34,11 @@ export function OpenStatus({ showClock = false, className }: { showClock?: boole
     return () => window.clearInterval(id);
   }, []);
 
-  const hours = `${pad(site.opens)}:00 – ${pad(site.closes)}:00`;
   const label = !now
-    ? hours
+    ? `${pad(site.opens)}:00 – ${pad(site.closes)}:00`
     : now.open
-      ? `Open now · until ${pad(site.closes)}:00`
-      : `Closed · opens ${pad(site.opens)}:00`;
+      ? t.openUntil(`${pad(site.closes)}:00`)
+      : t.closedUntil(`${pad(site.opens)}:00`);
 
   return (
     <span className={`status ${className ?? ""}`} data-state={!now ? "idle" : now.open ? "open" : "closed"}>

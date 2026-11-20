@@ -1,10 +1,14 @@
 "use client";
 
 import { useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { getCopy } from "@/lib/copy";
+import { href, type Lang } from "@/lib/i18n";
 import { menu, rupiah, site } from "@/lib/site";
 import { Photo } from "./Photo";
 
-export function MenuTabs({ arrow }: { arrow: ReactNode }) {
+export function MenuTabs({ lang, arrow }: { lang: Lang; arrow: ReactNode }) {
+  const copy = getCopy(lang);
+  const t = copy.menu;
   const [active, setActive] = useState(0);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -46,16 +50,16 @@ export function MenuTabs({ arrow }: { arrow: ReactNode }) {
 
       <div className="menu__body">
         <p className="overline" data-reveal>
-          The menu
+          {t.overline}
         </p>
         <h2 className="h2" data-split>
-          The balance you keep coming back for.
+          {t.title}
         </h2>
         <p className="lede" data-reveal>
-          Six short lists and two cup sizes, priced so it can be an everyday thing.
+          {t.lede}
         </p>
 
-        <div className="menu__tabs" role="tablist" aria-label="Menu categories" onKeyDown={onKeyDown} data-reveal>
+        <div className="menu__tabs" role="tablist" aria-label={t.tablist} onKeyDown={onKeyDown} data-reveal>
           {menu.map((category, index) => (
             <button
               key={category.id}
@@ -72,7 +76,7 @@ export function MenuTabs({ arrow }: { arrow: ReactNode }) {
               onClick={() => setActive(index)}
             >
               {category.label}
-              {category.isNew ? <span className="chip__badge">New</span> : null}
+              {category.isNew ? <span className="chip__badge">{copy.common.newBadge}</span> : null}
             </button>
           ))}
         </div>
@@ -88,17 +92,17 @@ export function MenuTabs({ arrow }: { arrow: ReactNode }) {
             tabIndex={0}
           >
             <h3 className="menu__panel-title">{category.label}</h3>
-            <p className="menu__note">{category.note}</p>
+            <p className="menu__note">{t.categories[category.id].note}</p>
             <dl className="menu__facts">
               <div>
-                <dt>Price range</dt>
+                <dt>{t.priceRange}</dt>
                 <dd>
                   {rupiah(category.priceFrom)} – {rupiah(category.priceTo)}
                 </dd>
               </div>
               <div>
-                <dt>Served</dt>
-                <dd>{category.sizes}</dd>
+                <dt>{t.served}</dt>
+                <dd>{t.categories[category.id].sizes}</dd>
               </div>
             </dl>
             <ol className="menu__list">
@@ -114,14 +118,12 @@ export function MenuTabs({ arrow }: { arrow: ReactNode }) {
 
         <div className="menu__cta">
           <a className="btn btn--primary" href={site.links.order} target="_blank" rel="noreferrer">
-            Order for pick-up {arrow}
+            {copy.common.orderPickup} {arrow}
           </a>
-          <a className="link" href="/menu">
-            See the full menu
+          <a className="link" href={href(lang, "/menu")}>
+            {t.full}
           </a>
-          <p className="fineprint">
-            Prices are the range for each list. Every store&rsquo;s full menu and exact prices live on ESB Order.
-          </p>
+          <p className="fineprint">{t.fineprint}</p>
         </div>
       </div>
     </div>
